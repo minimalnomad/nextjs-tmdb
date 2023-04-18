@@ -1,15 +1,29 @@
-import NavBar from "../components/NavBar";
+import { useEffect, useState } from "react";
+import Seo from "../components/Seo";
+
+const API_KEY = "1ca49c91ea5803e27833cde14bab4fe5";
 
 export default function Home() {
+  const [movies, setMovies] = useState();
+  useEffect(() => {
+    (async () => {
+      const { results } = await (
+        await fetch(
+          `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
+        )
+      ).json();
+      setMovies(results);
+    })();
+  }, []);
   return (
     <div>
-      <NavBar />
-      <h1 className="active">Hello</h1>
-      <style jsx>{`
-        a {
-          color: white;
-        }
-      `}</style>
+      <Seo title="Home" />
+      {!movies && <h4>Loading...</h4>}
+      {movies?.map((movie) => (
+        <div key={movie.id}>
+          <h4>{movie.original_title}</h4>
+        </div>
+      ))}
     </div>
   );
 }
